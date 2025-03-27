@@ -9,7 +9,7 @@ const getApiUrl = () => {
   
   if (isProduction) {
     // Return production API URL (use your actual domain)
-    return '/api'; // Relative URL for same-domain deployment
+    return 'https://flippy-production-9afd.up.railway.app/api'; // Relative URL for same-domain deployment
     // Or return absolute URL if API is on a different domain:
     // return 'https://api.yourapp.com/api';
   } else {
