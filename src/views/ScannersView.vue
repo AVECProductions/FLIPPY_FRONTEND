@@ -1,11 +1,11 @@
 <template>
   <div class="max-w-5xl mx-auto">
     <!-- Header section with responsive layout -->
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-xl font-bold text-[#F3F4F6] truncate mr-2">Active Scanners</h2>
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="text-xl font-bold uppercase tracking-wide text-white">Scanners</h2>
       <button 
         @click="openAddScannerModal" 
-        class="px-3 sm:px-4 py-2 rounded bg-[#3F3F46] text-[#F3F4F6] hover:bg-opacity-90 flex items-center flex-shrink-0"
+        class="px-3 sm:px-4 py-2 rounded border border-gray-600 text-gray-200 font-medium bg-transparent hover:bg-gray-800 hover:border-gray-500 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center flex-shrink-0"
       >
         <span class="mr-1">+</span>
         <span class="inline">Add Scanner</span>
@@ -31,43 +31,52 @@
       No scanners found.
     </div>
     
-    <!-- Scanners Table - With balanced column widths -->
-    <div v-else class="bg-[#2C2C2E] rounded-lg overflow-hidden shadow-lg">
-      <table class="w-full table-fixed">
-        <thead class="bg-[#1C1C1E]">
-          <tr>
-            <th class="px-4 py-3 text-left text-[#F3F4F6] w-[30%] max-w-xs">Query</th>
-            <th class="px-4 py-3 text-left text-[#F3F4F6] w-[25%] hidden sm:table-cell">Category</th>
-            <th class="px-4 py-3 text-left text-[#F3F4F6] w-[25%]">Town</th>
-            <th class="px-4 py-3 text-left text-[#F3F4F6] w-[20%]">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr 
-            v-for="scanner in scanners" 
-            :key="scanner.id"
-            class="border-t border-[#31415F] hover:bg-[#3F3F46] cursor-pointer"
-            @click="openScannerModal(scanner)"
-          >
-            <td class="px-4 py-3 text-[#F3F4F6] truncate">{{ scanner.query }}</td>
-            <td class="px-4 py-3 text-[#F3F4F6] truncate hidden sm:table-cell">{{ scanner.category }}</td>
-            <td class="px-4 py-3 text-[#F3F4F6] truncate">{{ scanner.town }}</td>
-            <td class="px-4 py-3">
-              <span 
-                class="px-2 py-1 rounded-full text-xs font-medium"
-                :class="scanner.status === 'running' ? 'bg-green-500 bg-opacity-20 text-green-500' : 'bg-gray-500 bg-opacity-20 text-gray-500'"
-              >
-                {{ scanner.status }}
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Scanners grouped by town with category headers -->
+    <div v-else class="space-y-12">
+      <div v-for="(townGroup, town) in groupedScanners" :key="town" class="space-y-4">
+        <!-- Town Header - More prominent -->
+        <div class="bg-blue-900 bg-opacity-20 border-l-4 border-blue-500 pl-4 py-3 rounded-r-md">
+          <h3 class="text-lg font-bold text-white">{{ town }}</h3>
+        </div>
+        
+        <!-- Single table per town with category headers -->
+        <div class="bg-[#121212] rounded-lg overflow-hidden shadow-lg border border-gray-800 ml-2">
+          <table class="w-full table-fixed">
+            <tbody>
+              <!-- Loop through categories -->
+              <template v-for="(categoryGroup, category) in townGroup" :key="category">
+                <!-- Category Header Row -->
+                <tr class="bg-[#1A1A1A] border-t border-gray-800">
+                  <td colspan="2" class="px-4 py-3 text-gray-300 font-medium uppercase tracking-wide">{{ category }}</td>
+                </tr>
+                
+                <!-- Scanner Rows for this category -->
+                <tr 
+                  v-for="scanner in categoryGroup" 
+                  :key="scanner.id"
+                  class="border-t border-gray-800 hover:bg-[#2C2C2E] cursor-pointer transition-colors duration-200 bg-[#232323]"
+                  @click="openScannerModal(scanner)"
+                >
+                  <td class="px-4 py-3 pl-8 text-[#F3F4F6] truncate w-[70%]">{{ scanner.query }}</td>
+                  <td class="px-4 py-3 w-[30%] text-right pr-6">
+                    <span 
+                      class="px-3 py-1 rounded-full text-xs font-medium"
+                      :class="scanner.status === 'running' ? 'bg-green-500 bg-opacity-20 text-green-500' : 'bg-gray-500 bg-opacity-20 text-gray-500'"
+                    >
+                      {{ scanner.status }}
+                    </span>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
     
     <!-- Add Scanner Modal -->
     <div v-if="showAddScannerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-[#2C2C2E] p-6 rounded-lg shadow-lg max-w-md w-full">
+      <div class="bg-black p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-800">
         <div class="flex justify-between items-start mb-4">
           <h3 class="text-lg font-bold text-[#F3F4F6]">Add New Scanner</h3>
           <button @click="closeAddScannerModal" class="text-[#9CA3AF] hover:text-white">
@@ -83,7 +92,7 @@
               id="query" 
               v-model="newScanner.query" 
               type="text" 
-              class="w-full px-3 py-2 bg-[#1C1C1E] border border-[#3F3F46] rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
+              class="w-full px-3 py-2 bg-[#1C1C1E] border border-gray-800 rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-gray-500"
               placeholder="Enter search query"
             />
           </div>
@@ -94,7 +103,7 @@
               id="category" 
               v-model="newScanner.category" 
               type="text" 
-              class="w-full px-3 py-2 bg-[#1C1C1E] border border-[#3F3F46] rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
+              class="w-full px-3 py-2 bg-[#1C1C1E] border border-gray-800 rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-gray-500"
               placeholder="Enter category"
             />
           </div>
@@ -105,7 +114,7 @@
               id="town" 
               v-model="newScanner.town" 
               type="text" 
-              class="w-full px-3 py-2 bg-[#1C1C1E] border border-[#3F3F46] rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
+              class="w-full px-3 py-2 bg-[#1C1C1E] border border-gray-800 rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-gray-500"
               placeholder="Enter town"
             />
           </div>
@@ -115,7 +124,7 @@
             <select 
               id="status" 
               v-model="newScanner.status" 
-              class="w-full px-3 py-2 bg-[#1C1C1E] border border-[#3F3F46] rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
+              class="w-full px-3 py-2 bg-[#1C1C1E] border border-gray-800 rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               <option value="running">Running</option>
               <option value="stopped">Stopped</option>
@@ -129,22 +138,22 @@
                 <input 
                   v-model="newScannerKeywords[index]" 
                   type="text" 
-                  class="flex-grow px-3 py-2 bg-[#1C1C1E] border border-[#3F3F46] rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  class="flex-grow px-3 py-2 bg-[#1C1C1E] border border-gray-800 rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-gray-500"
                   placeholder="Enter keyword"
                 />
                 <button 
                   @click="newScannerKeywords.splice(index, 1)" 
-                  class="ml-2 px-2 py-1 rounded bg-red-500 bg-opacity-20 text-red-500 hover:bg-opacity-30"
+                  class="ml-2 px-2 py-1 rounded border border-red-500 text-red-500 hover:bg-red-500 hover:bg-opacity-10 transition-colors duration-200"
                 >
                   Remove
                 </button>
-        </div>
-          <button 
+              </div>
+              <button 
                 @click="newScannerKeywords.push('')" 
-                class="w-full px-4 py-2 rounded bg-[#3F3F46] text-[#F3F4F6] hover:bg-opacity-90"
-          >
+                class="w-full px-4 py-2 rounded border border-gray-600 text-gray-200 bg-transparent hover:bg-gray-800 hover:border-gray-500 transition-all duration-200"
+              >
                 + Add Keyword
-          </button>
+              </button>
             </div>
             <p class="text-xs text-[#9CA3AF] mt-2">
               Keywords are used to filter search results. If any of these keywords are found in a listing title, it will be flagged.
@@ -152,19 +161,19 @@
           </div>
           
           <div class="flex justify-end space-x-2 mt-6">
-          <button 
+            <button 
               @click="closeAddScannerModal" 
-              class="px-4 py-2 rounded bg-[#3F3F46] text-[#F3F4F6] hover:bg-opacity-90"
-          >
+              class="px-4 py-2 rounded border border-gray-600 text-gray-200 bg-transparent hover:bg-gray-800 hover:border-gray-500 transition-all duration-200"
+            >
               Cancel
-          </button>
-          <button 
+            </button>
+            <button 
               @click="createNewScanner" 
-              class="px-4 py-2 rounded bg-[#3B82F6] text-white hover:bg-opacity-90"
+              class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200"
               :disabled="isCreating"
-          >
+            >
               {{ isCreating ? 'Creating...' : 'Add' }}
-          </button>
+            </button>
           </div>
         </div>
       </div>
@@ -172,7 +181,7 @@
     
     <!-- Scanner Management Modal -->
     <div v-if="showScannerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-[#2C2C2E] p-6 rounded-lg shadow-lg max-w-md w-full">
+      <div class="bg-black p-6 rounded-lg shadow-lg max-w-md w-full border border-gray-800">
         <div class="flex justify-between items-start mb-4">
           <h3 class="text-lg font-bold text-[#F3F4F6]">Manage Scanner</h3>
           <button @click="closeScannerModal" class="text-[#9CA3AF] hover:text-white">
@@ -182,7 +191,7 @@
         
         <div v-if="selectedScanner" class="mb-6">
           <!-- Scanner Details Section -->
-          <div class="mb-4 pb-4 border-b border-[#3F3F46]">
+          <div class="mb-4 pb-4 border-b border-gray-800">
             <p class="text-[#F3F4F6] mb-2"><span class="font-medium">Query:</span> {{ selectedScanner.query }}</p>
             <p class="text-[#F3F4F6] mb-2"><span class="font-medium">Category:</span> {{ selectedScanner.category }}</p>
             <p class="text-[#F3F4F6] mb-2"><span class="font-medium">Town:</span> {{ selectedScanner.town }}</p>
@@ -198,7 +207,7 @@
           </div>
           
           <!-- Keywords Section -->
-          <div class="mb-4 pb-4 border-b border-[#3F3F46]">
+          <div class="mb-4 pb-4 border-b border-gray-800">
             <div class="flex justify-between items-center mb-2">
               <h4 class="text-md font-semibold text-[#F3F4F6]">Keywords</h4>
               <button 
@@ -216,32 +225,32 @@
                   <input 
                     v-model="keywords[index]" 
                     type="text" 
-                    class="flex-grow px-3 py-2 bg-[#1C1C1E] border border-[#3F3F46] rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    class="flex-grow px-3 py-2 bg-[#1C1C1E] border border-gray-800 rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-gray-500"
                     placeholder="Enter keyword"
                   />
                   <button 
                     @click="removeKeyword(index)" 
-                    class="ml-2 px-2 py-1 rounded bg-red-500 bg-opacity-20 text-red-500 hover:bg-opacity-30"
+                    class="ml-2 px-2 py-1 rounded border border-red-500 text-red-500 hover:bg-red-500 hover:bg-opacity-10 transition-colors duration-200"
                   >
                     Remove
                   </button>
                 </div>
                 <button 
                   @click="addKeyword" 
-                  class="w-full px-4 py-2 rounded bg-[#3F3F46] text-[#F3F4F6] hover:bg-opacity-90"
+                  class="w-full px-4 py-2 rounded border border-gray-600 text-gray-200 bg-transparent hover:bg-gray-800 hover:border-gray-500 transition-all duration-200"
                 >
                   + Add Keyword
                 </button>
                 <div class="flex justify-end space-x-2 mt-4">
                   <button 
                     @click="isEditingKeywords = false" 
-                    class="px-4 py-2 rounded bg-[#3F3F46] text-[#F3F4F6] hover:bg-opacity-90"
+                    class="px-4 py-2 rounded border border-gray-600 text-gray-200 bg-transparent hover:bg-gray-800 hover:border-gray-500 transition-all duration-200"
                   >
                     Cancel
                   </button>
                   <button 
                     @click="saveKeywords" 
-                    class="px-4 py-2 rounded bg-[#3B82F6] text-white hover:bg-opacity-90"
+                    class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200"
                     :disabled="isSavingKeywords"
                   >
                     {{ isSavingKeywords ? 'Saving...' : 'Save Keywords' }}
@@ -279,7 +288,7 @@
                   id="edit-query" 
                   v-model="editForm.query" 
                   type="text" 
-                  class="w-full px-3 py-2 bg-[#1C1C1E] border border-[#3F3F46] rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  class="w-full px-3 py-2 bg-[#1C1C1E] border border-gray-800 rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-gray-500"
                   placeholder="Enter search query"
                 />
               </div>
@@ -290,7 +299,7 @@
                   id="edit-category" 
                   v-model="editForm.category" 
                   type="text" 
-                  class="w-full px-3 py-2 bg-[#1C1C1E] border border-[#3F3F46] rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  class="w-full px-3 py-2 bg-[#1C1C1E] border border-gray-800 rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-gray-500"
                   placeholder="Enter category"
                 />
               </div>
@@ -301,7 +310,7 @@
                   id="edit-town" 
                   v-model="editForm.town" 
                   type="text" 
-                  class="w-full px-3 py-2 bg-[#1C1C1E] border border-[#3F3F46] rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  class="w-full px-3 py-2 bg-[#1C1C1E] border border-gray-800 rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-gray-500"
                   placeholder="Enter town"
                 />
               </div>
@@ -311,7 +320,7 @@
                 <select 
                   id="edit-status" 
                   v-model="editForm.status" 
-                  class="w-full px-3 py-2 bg-[#1C1C1E] border border-[#3F3F46] rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  class="w-full px-3 py-2 bg-[#1C1C1E] border border-gray-800 rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   <option value="running">Running</option>
                   <option value="stopped">Stopped</option>
@@ -321,13 +330,13 @@
               <div class="flex justify-end space-x-2 mt-6">
                 <button 
                   @click="isEditing = false" 
-                  class="px-4 py-2 rounded bg-[#3F3F46] text-[#F3F4F6] hover:bg-opacity-90"
+                  class="px-4 py-2 rounded border border-gray-600 text-gray-200 bg-transparent hover:bg-gray-800 hover:border-gray-500 transition-all duration-200"
                 >
                   Cancel
                 </button>
                 <button 
                   @click="saveEditForm" 
-                  class="px-4 py-2 rounded bg-[#3B82F6] text-white hover:bg-opacity-90"
+                  class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition-colors duration-200"
                   :disabled="isUpdating"
                 >
                   {{ isUpdating ? 'Saving...' : 'Save' }}
@@ -340,7 +349,7 @@
           <div v-else class="flex flex-col space-y-3">
             <button 
               @click="isEditing = true" 
-              class="w-full px-4 py-2 rounded bg-blue-500 bg-opacity-20 text-blue-500 hover:bg-opacity-30"
+              class="w-full px-4 py-2 rounded border border-blue-500 text-blue-500 hover:bg-blue-500 hover:bg-opacity-10 transition-colors duration-200"
             >
               Edit Scanner
             </button>
@@ -348,14 +357,14 @@
             <button 
               @click="handleToggleStatus" 
               class="w-full px-4 py-2 rounded"
-              :class="selectedScanner.status === 'running' ? 'bg-red-500 bg-opacity-20 text-red-500 hover:bg-opacity-30' : 'bg-green-500 bg-opacity-20 text-green-500 hover:bg-opacity-30'"
+              :class="selectedScanner.status === 'running' ? 'border border-red-500 text-red-500 hover:bg-red-500 hover:bg-opacity-10' : 'border border-green-500 text-green-500 hover:bg-green-500 hover:bg-opacity-10'"
             >
               {{ selectedScanner.status === 'running' ? 'Stop Scanner' : 'Start Scanner' }}
             </button>
             
             <button 
               @click="handleDeleteConfirm" 
-              class="w-full px-4 py-2 rounded bg-red-500 bg-opacity-20 text-red-500 hover:bg-opacity-30"
+              class="w-full px-4 py-2 rounded border border-red-500 text-red-500 hover:bg-red-500 hover:bg-opacity-10 transition-colors duration-200"
             >
               Delete Scanner
             </button>
@@ -364,20 +373,20 @@
           <!-- Delete Confirmation Section -->
           <div v-if="showDeleteConfirm" class="mt-4 p-4 bg-red-500 bg-opacity-10 rounded-lg">
             <p class="text-[#F3F4F6] mb-4">Are you sure you want to delete this scanner?</p>
-        <div class="flex justify-end space-x-2">
-          <button 
+            <div class="flex justify-end space-x-2">
+              <button 
                 @click="showDeleteConfirm = false" 
-            class="px-4 py-2 rounded bg-[#3F3F46] text-[#F3F4F6] hover:bg-opacity-90"
-          >
-            Cancel
-          </button>
-          <button 
+                class="px-4 py-2 rounded border border-gray-600 text-gray-200 bg-transparent hover:bg-gray-800 hover:border-gray-500 transition-all duration-200"
+              >
+                Cancel
+              </button>
+              <button 
                 @click="handleDelete" 
-            class="px-4 py-2 rounded bg-red-500 text-white hover:bg-opacity-90"
-            :disabled="isDeleting"
-          >
+                class="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600 transition-colors duration-200"
+                :disabled="isDeleting"
+              >
                 {{ isDeleting ? 'Deleting...' : 'Confirm Delete' }}
-          </button>
+              </button>
             </div>
           </div>
         </div>
@@ -387,7 +396,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, onUnmounted } from 'vue';
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue';
 import { 
   getScanners, 
   createScanner, 
@@ -441,6 +450,31 @@ const isSavingKeywords = ref(false);
 // Add scanner form state
 const newScannerKeywords = ref<string[]>([]);
 
+// Group scanners by town and then by category
+const groupedScanners = computed(() => {
+  const grouped: Record<string, Record<string, Scanner[]>> = {};
+  
+  scanners.value.forEach(scanner => {
+    const town = scanner.town || 'Uncategorized';
+    const category = scanner.category || 'Uncategorized';
+    
+    // Initialize town group if it doesn't exist
+    if (!grouped[town]) {
+      grouped[town] = {};
+    }
+    
+    // Initialize category group if it doesn't exist
+    if (!grouped[town][category]) {
+      grouped[town][category] = [];
+    }
+    
+    // Add scanner to its category group
+    grouped[town][category].push(scanner);
+  });
+  
+  return grouped;
+});
+
 const fetchScanners = async () => {
   loading.value = true;
   error.value = null;
@@ -483,8 +517,8 @@ const createNewScanner = async () => {
         await updateKeywords(created.id, filteredKeywords);
       }
       
-        successMessage.value = 'Scanner created successfully';
-        await fetchScanners();
+      successMessage.value = 'Scanner created successfully';
+      await fetchScanners();
       closeAddScannerModal();
     }
   } catch (err: any) {
@@ -667,4 +701,11 @@ const saveKeywords = async () => {
     isSavingKeywords.value = false;
   }
 };
-</script> 
+</script>
+
+<style scoped>
+/* Add this to match the home background color */
+:deep(body), :deep(html) {
+  background-color: black;
+}
+</style> 

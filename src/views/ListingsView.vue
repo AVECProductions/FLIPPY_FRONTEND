@@ -1,19 +1,19 @@
 <template>
   <div class="w-full relative">
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-xl font-bold text-[#F3F4F6]">Latest Listings</h2>
+      <h2 class="text-xl font-bold uppercase tracking-wide text-white">Listings</h2>
       <div class="flex space-x-2">
         <button 
           @click="toggleWatchlistFilter" 
-          class="px-4 py-2 rounded bg-[#3F3F46] text-[#F3F4F6] hover:bg-opacity-90 flex items-center"
-          :class="{ 'bg-[#3B82F6]': filters.watchlist }"
+          class="px-4 py-2 rounded bg-transparent border border-gray-600 text-gray-200 hover:bg-gray-800 hover:border-gray-500 flex items-center transition-all duration-200"
+          :class="{ 'bg-gray-800 border-blue-500': filters.watchlist }"
         >
-          <span class="mr-1 text-white">★</span> {{ filters.watchlist ? 'All Listings' : 'Watchlist Only' }}
+          <span class="mr-1" :class="filters.watchlist ? 'text-blue-400' : 'text-white'">★</span> Watchlist
         </button>
         <button 
           @click="toggleFiltersVisible" 
-          class="px-4 py-2 rounded bg-[#3F3F46] text-[#F3F4F6] hover:bg-opacity-90 flex items-center"
-          :class="{ 'bg-[#3B82F6]': filtersVisible }"
+          class="px-4 py-2 rounded bg-transparent border border-gray-600 text-gray-200 hover:bg-gray-800 hover:border-gray-500 flex items-center transition-all duration-200"
+          :class="{ 'bg-gray-800 border-blue-500': filtersVisible }"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
@@ -26,13 +26,13 @@
     <!-- Filters Sidebar -->
     <div 
       v-if="filtersVisible" 
-      class="fixed inset-y-0 right-0 w-80 bg-[#2C2C2E] shadow-lg transform transition-transform duration-300 ease-in-out z-50 flex flex-col"
+      class="fixed inset-y-0 right-0 w-80 bg-black shadow-lg transform transition-transform duration-300 ease-in-out z-50 flex flex-col border-l border-gray-800"
       :class="{ 'translate-x-0': filtersVisible, 'translate-x-full': !filtersVisible }"
     >
       <!-- Filters Header -->
-      <div class="p-4 border-b border-[#3F3F46] flex justify-between items-center">
-        <h3 class="text-lg font-semibold text-[#F3F4F6]">Filters</h3>
-        <button @click="toggleFiltersVisible" class="text-[#F3F4F6] hover:text-white">
+      <div class="p-4 border-b border-gray-800 flex justify-between items-center">
+        <h3 class="text-lg font-semibold uppercase tracking-wide text-white">Filters</h3>
+        <button @click="toggleFiltersVisible" class="text-gray-400 hover:text-white">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
           </svg>
@@ -43,11 +43,11 @@
       <div class="flex-1 overflow-y-auto p-4 space-y-6">
         <!-- Query Filter -->
         <div>
-          <label for="queryFilter" class="block text-sm font-medium text-[#F3F4F6] mb-2">Query</label>
+          <label for="queryFilter" class="block text-sm font-medium text-gray-300 mb-2">Query</label>
           <select 
             id="queryFilter" 
             v-model="tempFilters.query" 
-            class="w-full px-3 py-2 bg-[#1C1C1E] border border-[#3F3F46] rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
+            class="w-full px-3 py-2 bg-[#1C1C1E] border border-gray-800 rounded-md text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
             <option value="">All Queries</option>
             <option v-for="query in filterOptions.queries" :key="query" :value="query">{{ query }}</option>
@@ -56,11 +56,11 @@
         
         <!-- Category Filter -->
         <div>
-          <label for="categoryFilter" class="block text-sm font-medium text-[#F3F4F6] mb-2">Category</label>
+          <label for="categoryFilter" class="block text-sm font-medium text-gray-300 mb-2">Category</label>
           <select 
             id="categoryFilter" 
             v-model="tempFilters.category" 
-            class="w-full px-3 py-2 bg-[#1C1C1E] border border-[#3F3F46] rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
+            class="w-full px-3 py-2 bg-[#1C1C1E] border border-gray-800 rounded-md text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
             <option value="">All Categories</option>
             <option v-for="category in filterOptions.categories" :key="category" :value="category">{{ category }}</option>
@@ -69,11 +69,11 @@
         
         <!-- Scanner Location Filter -->
         <div>
-          <label for="scannerLocationFilter" class="block text-sm font-medium text-[#F3F4F6] mb-2">Scanner Location</label>
+          <label for="scannerLocationFilter" class="block text-sm font-medium text-gray-300 mb-2">Scanner Location</label>
           <select 
             id="scannerLocationFilter" 
             v-model="tempFilters.scanner_location" 
-            class="w-full px-3 py-2 bg-[#1C1C1E] border border-[#3F3F46] rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
+            class="w-full px-3 py-2 bg-[#1C1C1E] border border-gray-800 rounded-md text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
             <option value="">All Locations</option>
             <option v-for="location in filterOptions.scanner_locations" :key="location" :value="location">{{ location }}</option>
@@ -82,14 +82,14 @@
         
         <!-- Price Range Filter -->
         <div>
-          <label class="block text-sm font-medium text-[#F3F4F6] mb-2">Price Range</label>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Price Range</label>
           <div class="flex space-x-2">
             <div class="w-1/2">
               <input 
                 v-model.number="tempFilters.min_price" 
                 type="number" 
                 placeholder="Min"
-                class="w-full px-3 py-2 bg-[#1C1C1E] border border-[#3F3F46] rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
+                class="w-full px-3 py-2 bg-[#1C1C1E] border border-gray-800 rounded-md text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
             <div class="w-1/2">
@@ -97,7 +97,7 @@
                 v-model.number="tempFilters.max_price" 
                 type="number" 
                 placeholder="Max"
-                class="w-full px-3 py-2 bg-[#1C1C1E] border border-[#3F3F46] rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
+                class="w-full px-3 py-2 bg-[#1C1C1E] border border-gray-800 rounded-md text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -105,13 +105,13 @@
         
         <!-- Max Distance Filter -->
         <div>
-          <label for="distanceFilter" class="block text-sm font-medium text-[#F3F4F6] mb-2">Max Distance (miles)</label>
+          <label for="distanceFilter" class="block text-sm font-medium text-gray-300 mb-2">Max Distance (miles)</label>
           <input 
             id="distanceFilter"
             v-model.number="tempFilters.max_distance" 
             type="number" 
             placeholder="Enter maximum distance"
-            class="w-full px-3 py-2 bg-[#1C1C1E] border border-[#3F3F46] rounded-md text-[#F3F4F6] focus:outline-none focus:ring-1 focus:ring-blue-500"
+            class="w-full px-3 py-2 bg-[#1C1C1E] border border-gray-800 rounded-md text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
         
@@ -121,24 +121,24 @@
             <input 
               type="checkbox" 
               v-model="tempFilters.watchlist" 
-              class="form-checkbox h-5 w-5 text-blue-500 rounded bg-[#1C1C1E] border-[#3F3F46] focus:ring-blue-500"
+              class="form-checkbox h-5 w-5 text-blue-500 rounded bg-[#1C1C1E] border-gray-800 focus:ring-blue-500"
             />
-            <span class="text-sm font-medium text-[#F3F4F6]">Show Watchlist Only</span>
+            <span class="text-sm font-medium text-gray-300">Show Watchlist Only</span>
           </label>
         </div>
       </div>
       
       <!-- Filter Actions -->
-      <div class="p-4 border-t border-[#3F3F46] flex justify-between">
+      <div class="p-4 border-t border-gray-800 flex justify-between">
         <button 
           @click="resetFilters" 
-          class="px-4 py-2 rounded bg-[#3F3F46] text-[#F3F4F6] hover:bg-opacity-90"
+          class="px-4 py-2 rounded bg-transparent border border-gray-600 text-gray-200 hover:bg-gray-800 hover:border-gray-500 transition-all duration-200"
         >
           Reset
         </button>
         <button 
           @click="applyFilters" 
-          class="px-4 py-2 rounded bg-[#3B82F6] text-white hover:bg-opacity-90"
+          class="px-4 py-2 rounded bg-transparent border border-blue-500 text-blue-400 hover:bg-gray-800 hover:border-blue-400 transition-all duration-200"
         >
           Apply Filters
         </button>
@@ -163,59 +163,59 @@
     
     <!-- Active Filters Display -->
     <div v-if="hasActiveFilters" class="flex flex-wrap items-center gap-2 mb-4">
-      <span class="text-[#9CA3AF]">Active Filters:</span>
+      <span class="text-gray-400">Active Filters:</span>
       <div 
         v-if="filters.query" 
-        class="px-2 py-1 bg-[#3B82F6] bg-opacity-20 text-blue-400 rounded-full text-xs flex items-center"
+        class="px-2 py-1 bg-blue-500 bg-opacity-20 text-blue-400 rounded-full text-xs flex items-center"
       >
         Query: {{ filters.query }}
         <button @click="removeFilter('query')" class="ml-1 font-bold">×</button>
       </div>
       <div 
         v-if="filters.category" 
-        class="px-2 py-1 bg-[#3B82F6] bg-opacity-20 text-blue-400 rounded-full text-xs flex items-center"
+        class="px-2 py-1 bg-blue-500 bg-opacity-20 text-blue-400 rounded-full text-xs flex items-center"
       >
         Category: {{ filters.category }}
         <button @click="removeFilter('category')" class="ml-1 font-bold">×</button>
       </div>
       <div 
         v-if="filters.scanner_location" 
-        class="px-2 py-1 bg-[#3B82F6] bg-opacity-20 text-blue-400 rounded-full text-xs flex items-center"
+        class="px-2 py-1 bg-blue-500 bg-opacity-20 text-blue-400 rounded-full text-xs flex items-center"
       >
         Scanner Location: {{ filters.scanner_location }}
         <button @click="removeFilter('scanner_location')" class="ml-1 font-bold">×</button>
       </div>
       <div 
         v-if="filters.min_price !== null && filters.min_price !== undefined" 
-        class="px-2 py-1 bg-[#3B82F6] bg-opacity-20 text-blue-400 rounded-full text-xs flex items-center"
+        class="px-2 py-1 bg-blue-500 bg-opacity-20 text-blue-400 rounded-full text-xs flex items-center"
       >
         Min Price: ${{ filters.min_price }}
         <button @click="removeFilter('min_price')" class="ml-1 font-bold">×</button>
       </div>
       <div 
         v-if="filters.max_price !== null && filters.max_price !== undefined" 
-        class="px-2 py-1 bg-[#3B82F6] bg-opacity-20 text-blue-400 rounded-full text-xs flex items-center"
+        class="px-2 py-1 bg-blue-500 bg-opacity-20 text-blue-400 rounded-full text-xs flex items-center"
       >
         Max Price: ${{ filters.max_price }}
         <button @click="removeFilter('max_price')" class="ml-1 font-bold">×</button>
       </div>
       <div 
         v-if="filters.watchlist" 
-        class="px-2 py-1 bg-[#3B82F6] bg-opacity-20 text-blue-400 rounded-full text-xs flex items-center"
+        class="px-2 py-1 bg-blue-500 bg-opacity-20 text-blue-400 rounded-full text-xs flex items-center"
       >
         Watchlist Only
         <button @click="removeFilter('watchlist')" class="ml-1 font-bold">×</button>
       </div>
       <div 
         v-if="filters.max_distance !== null && filters.max_distance !== undefined" 
-        class="px-2 py-1 bg-[#3B82F6] bg-opacity-20 text-blue-400 rounded-full text-xs flex items-center"
+        class="px-2 py-1 bg-blue-500 bg-opacity-20 text-blue-400 rounded-full text-xs flex items-center"
       >
         Max Distance: {{ filters.max_distance }} miles
         <button @click="removeFilter('max_distance')" class="ml-1 font-bold">×</button>
       </div>
       <button 
         @click="resetFilters" 
-        class="px-2 py-1 bg-[#3F3F46] text-[#F3F4F6] rounded-full text-xs"
+        class="px-2 py-1 bg-transparent border border-gray-600 text-gray-300 rounded-full text-xs hover:bg-gray-800"
       >
         Clear All
       </button>
@@ -227,7 +227,7 @@
     </div>
     
     <!-- Empty State -->
-    <div v-else-if="listings.length === 0" class="text-center py-8 text-[#9CA3AF]">
+    <div v-else-if="listings.length === 0" class="text-center py-8 text-gray-400">
       No listings found.
     </div>
     
@@ -238,7 +238,7 @@
         :key="listing.listing_idx"
         :href="listing.url"
         target="_blank"
-        class="bg-[#2C2C2E] rounded-lg overflow-hidden shadow-lg flex flex-col hover:bg-[#3A3A3C] transition-colors duration-200 cursor-pointer"
+        class="bg-[#1C1C1E] rounded-lg overflow-hidden shadow-lg flex flex-col hover:bg-[#2C2C2E] transition-colors duration-200 cursor-pointer border border-gray-800"
       >
         <!-- Image Container -->
         <div class="relative w-full aspect-square overflow-hidden">
@@ -250,33 +250,33 @@
             @load="onImageLoad($event)"
           />
           <button 
-            @click.stop="toggleListingWatchlist(listing)" 
-            class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black bg-opacity-50 flex items-center justify-center z-10 hover:bg-opacity-70"
+            @click.prevent.stop="toggleListingWatchlist(listing)" 
+            class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black bg-opacity-50 flex items-center justify-center z-10 active:bg-opacity-70 watchlist-button"
           >
-            <span class="text-sm" :class="listing.watchlist ? 'text-yellow-400' : 'text-white'">★</span>
+            <span class="text-sm" :class="listing.watchlist ? 'text-yellow-400' : 'text-gray-400'">★</span>
           </button>
         </div>
         
         <!-- Content Container -->
         <div class="p-2 flex-1 flex flex-col">
           <!-- Price -->
-          <div class="text-base font-bold text-[#F3F4F6]">{{ listing.price }}</div>
+          <div class="text-base font-bold text-white">{{ listing.price }}</div>
           
           <!-- Title - Updated to show 2 lines -->
-          <h3 class="font-medium text-[#F3F4F6] text-sm line-clamp-2 min-h-[2.5rem]">{{ listing.title }}</h3>
+          <h3 class="font-medium text-gray-300 text-sm line-clamp-2 min-h-[2.5rem]">{{ listing.title }}</h3>
           
           <!-- Location with mileage and distance -->
           <div class="flex flex-col mt-1">
             <!-- Location and Distance Row -->
             <div class="flex justify-between items-center">
-              <p class="text-xs text-[#9CA3AF] truncate mr-2">{{ listing.location }}</p>
-              <p v-if="listing.distance !== null && listing.distance !== undefined" class="text-xs text-[#9CA3AF] whitespace-nowrap">
+              <p class="text-xs text-gray-400 truncate mr-2">{{ listing.location }}</p>
+              <p v-if="listing.distance !== null && listing.distance !== undefined" class="text-xs text-gray-400 whitespace-nowrap">
                 {{ formatDistance(listing.distance) }}
               </p>
             </div>
             
             <!-- Optional mileage data - shown if available -->
-            <p v-if="listing.description && listing.description.includes('mile')" class="text-xs text-[#9CA3AF]">
+            <p v-if="listing.description && listing.description.includes('mile')" class="text-xs text-gray-400">
               {{ extractMiles(listing.description) }}
             </p>
           </div>
@@ -289,17 +289,17 @@
       <button 
         @click="prevPage" 
         :disabled="currentPage === 1"
-        class="px-3 py-1 rounded bg-[#3F3F46] text-[#F3F4F6] disabled:opacity-50"
+        class="px-3 py-1 rounded bg-transparent border border-gray-600 text-gray-200 disabled:opacity-50 hover:bg-gray-800 hover:border-gray-500 transition-all duration-200"
       >
         Previous
       </button>
       
-      <span class="px-3 py-1 text-[#F3F4F6]">{{ currentPage }} / {{ totalPages }}</span>
+      <span class="px-3 py-1 text-gray-300">{{ currentPage }} / {{ totalPages }}</span>
       
       <button 
         @click="nextPage" 
         :disabled="currentPage === totalPages"
-        class="px-3 py-1 rounded bg-[#3F3F46] text-[#F3F4F6] disabled:opacity-50"
+        class="px-3 py-1 rounded bg-transparent border border-gray-600 text-gray-200 disabled:opacity-50 hover:bg-gray-800 hover:border-gray-500 transition-all duration-200"
       >
         Next
       </button>
@@ -374,13 +374,7 @@ const fetchFilterOptions = async () => {
   }
 };
 
-const toggleListingWatchlist = async (listing: Listing, event?: Event) => {
-  // Prevent the parent link click if an event is passed
-  if (event) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-  
+const toggleListingWatchlist = async (listing: Listing) => {
   try {
     const updated = await toggleWatchlist(listing.listing_idx, listing.watchlist);
     if (updated) {
@@ -391,9 +385,19 @@ const toggleListingWatchlist = async (listing: Listing, event?: Event) => {
       }
       
       successMessage.value = `Listing ${updated.watchlist ? 'added to' : 'removed from'} watchlist`;
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        successMessage.value = null;
+      }, 3000);
     }
   } catch (err: any) {
     error.value = err.message || 'Failed to update watchlist';
+    
+    // Clear error message after 3 seconds
+    setTimeout(() => {
+      error.value = null;
+    }, 3000);
   }
 };
 
@@ -489,20 +493,6 @@ const formatDistance = (distance: number): string => {
   if (distance === 0) return 'Local';
   return `${distance.toFixed(1)} miles`;
 };
-
-// Clear success message after 3 seconds
-const clearSuccessMessage = () => {
-  if (successMessage.value) {
-    setTimeout(() => {
-      successMessage.value = null;
-    }, 3000);
-  }
-};
-
-// Watch for success message changes
-watch(successMessage, () => {
-  clearSuccessMessage();
-});
 
 // Watch for page changes
 watch(currentPage, () => {
@@ -613,5 +603,12 @@ img {
   transform: translateY(-2px);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* Fix for mobile hover states */
+@media (hover: hover) {
+  .watchlist-button:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
 }
 </style> 
