@@ -23,7 +23,7 @@ const getAuthUrl = () => {
                        window.location.hostname !== '127.0.0.1';
   
   if (isProduction) {
-    return '/auth'; // Relative URL for same-domain deployment
+    return 'https://flippy-production-9afd.up.railway.app/auth'; // Relative URL for same-domain deployment
     // Or return absolute URL if API is on a different domain:
     // return 'https://api.yourapp.com/auth';
   } else {
